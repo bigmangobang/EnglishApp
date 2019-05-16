@@ -5,7 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/baseBoard"
-    tools:context=".WelcomeActivity">
+    tools:context=".WelcomeActivity"
+    tools:ignore="ExtraText">
+
+    //口语的目录界面
 
     <RelativeLayout
         android:id="@+id/spoken_layout"
@@ -13,11 +16,11 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/under_board">
 
-        <TextView
+
+        <ListView
+            android:id="@+id/list_item_spo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="口语" />
+            android:layout_height="wrap_content" />
     </RelativeLayout>
 
     <RelativeLayout
