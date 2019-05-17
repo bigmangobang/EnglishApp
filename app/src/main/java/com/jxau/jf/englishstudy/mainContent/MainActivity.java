@@ -1,6 +1,7 @@
 package com.jxau.jf.englishstudy.mainContent;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,7 +15,7 @@ import com.jxau.jf.englishstudy.coverAdapter.SpokenAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class MainActivity extends Activity implements View.OnClickListener{
     private ListView listView1, listView2, listView3, listView4, listView5;
     private ImageButton button1, button2, button3, button4, button5;
     private RelativeLayout layout1, layout2, layout3, layout4, layout5;
@@ -44,13 +45,21 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
 
     private void init_view() {
         //显示口语目录条目
-        List<String> itemList = new ArrayList<>();
+        final List<String> itemList = new ArrayList<>();
         for (int i = 0; i < 80; i++) {
             itemList.add("这是第" + i + "本书");
         }
         //设置ListView的数据适配器
         listView1.setAdapter(new SpokenAdapter(this, itemList));
-        listView1.setOnItemClickListener(this);
+        listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String title = itemList.get(position);
+                Intent intent = new Intent(MainActivity.this,Spoken.class);
+                intent.putExtra("title",title);
+                startActivity(intent);
+            }
+        });
         show_spoken();
     }
 
@@ -116,8 +125,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
         layout5.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-    }
+//    @Override
+//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        int i = parent.getSelectedItemPosition();
+//    }
 }
