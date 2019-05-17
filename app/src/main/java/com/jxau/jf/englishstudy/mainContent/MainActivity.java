@@ -3,11 +3,13 @@ package com.jxau.jf.englishstudy.mainContent;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.jxau.jf.englishstudy.R;
 import com.jxau.jf.englishstudy.coverAdapter.SpokenAdapter;
@@ -15,7 +17,7 @@ import com.jxau.jf.englishstudy.coverAdapter.SpokenAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity implements View.OnClickListener{
+public class MainActivity extends Activity implements View.OnClickListener {
     private ListView listView1, listView2, listView3, listView4, listView5;
     private ImageButton button1, button2, button3, button4, button5;
     private RelativeLayout layout1, layout2, layout3, layout4, layout5;
@@ -40,27 +42,44 @@ public class MainActivity extends Activity implements View.OnClickListener{
         button4.setOnClickListener(this);
         button5.setOnClickListener(this);
         listView1 = findViewById(R.id.list_item_spo);
+        listView4 = findViewById(R.id.list_item_read);
         init_view();
     }
 
     private void init_view() {
         //显示口语目录条目
-        final List<String> itemList = new ArrayList<>();
+        final List<String> spoItemList = new ArrayList<>();
         for (int i = 0; i < 80; i++) {
-            itemList.add("这是第" + i + "本书");
+            spoItemList.add("这是第" + i + "本口语书");
         }
         //设置ListView的数据适配器
-        listView1.setAdapter(new SpokenAdapter(this, itemList));
+        listView1.setAdapter(new SpokenAdapter(this, spoItemList));
         listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String title = itemList.get(position);
-                Intent intent = new Intent(MainActivity.this,Spoken.class);
-                intent.putExtra("title",title);
+                String spoTitle = spoItemList.get(position);
+                Intent intent = new Intent(MainActivity.this, SpokenActivity.class);
+                intent.putExtra("title", spoTitle);
                 startActivity(intent);
             }
         });
         show_spoken();
+        //显示阅读目录条目
+        final List<String> readItemList = new ArrayList<>();
+        for (int i = 0; i < 80; i++) {
+            readItemList.add("这是第" + i + "本阅读书");
+        }
+        //设置ListView的数据适配器
+        listView4.setAdapter(new SpokenAdapter(this, readItemList));
+        listView4.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String readTitle = readItemList.get(position);
+                Intent intentToRead = new Intent(MainActivity.this, ReadActivity.class);
+                intentToRead.putExtra("title", readTitle);
+                startActivity(intentToRead);
+            }
+        });
     }
 
     @Override
@@ -125,8 +144,39 @@ public class MainActivity extends Activity implements View.OnClickListener{
         layout5.setVisibility(View.VISIBLE);
     }
 
-//    @Override
-//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        int i = parent.getSelectedItemPosition();
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exit();
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void exit() {
+        long exitTime = 0;
+        if ((System.currentTimeMillis() - exitTime) > 2000) {
+//            Toast.makeText(getApplicationContext(), "再按一次退出程序",
+//                    Toast.LENGTH_SHORT).show();
+            exitTime = System.currentTimeMillis();
+        } else {
+            finish();
+            System.exit(0);
+        }
+    }
 }

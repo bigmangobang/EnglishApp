@@ -58,11 +58,11 @@
         android:layout_above="@+id/under_board"
         android:visibility="gone">
 
-        <TextView
+
+        <ListView
+            android:id="@+id/list_item_read"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="阅读" />
+            android:layout_height="wrap_content" />
     </RelativeLayout>
 
     <RelativeLayout

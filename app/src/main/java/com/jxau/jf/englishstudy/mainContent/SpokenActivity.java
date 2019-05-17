@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.jxau.jf.englishstudy.R;
 
 
-public class Spoken extends AppCompatActivity {
+public class SpokenActivity extends AppCompatActivity {
     private TextView title;
     private Button playVoice;
     private Boolean isPause = true;//是否为播放状态，true为暂停状态
@@ -23,7 +23,7 @@ public class Spoken extends AppCompatActivity {
         title = findViewById(R.id.spo_title);
         title.setText(getIntent().getStringExtra("title"));
         //直接创建，不需要设置setDataSource
-        final MediaPlayer mMediaPlayer = MediaPlayer.create(Spoken.this, R.raw.girl);
+        final MediaPlayer mMediaPlayer = MediaPlayer.create(SpokenActivity.this, R.raw.girl);
         playVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
