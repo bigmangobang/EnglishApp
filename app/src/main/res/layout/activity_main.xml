@@ -1,90 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/baseBoard"
-    tools:context=".WelcomeActivity"
+    tools:context=".mainContent.MainActivity"
     tools:ignore="ExtraText">
 
-    //口语的目录界面
 
     <RelativeLayout
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/title">
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="@string/title_name"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/refresh_button"
+        android:layout_below="@+id/logo">
+
+        <LinearLayout
+            android:id="@+id/warning"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <ImageView
+
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="300sp"
+                android:background="@drawable/warning" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20sp"
+                android:text="@string/error_connect" />
+        </LinearLayout>
+
+
+        //口语的目录界面
+
+        <RelativeLayout
         android:id="@+id/spoken_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/under_board">
+        android:layout_height="match_parent">
 
 
         <ListView
-            android:id="@+id/list_item_spo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        android:id="@+id/list_item_spo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/listen_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ListView
+                android:id="@+id/list_item_listen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/word_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ListView
+                android:id="@+id/list_item_word"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/read_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+
+            <ListView
+                android:id="@+id/list_item_read"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/other_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="拓展" />
+        </RelativeLayout>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/listen_layout"
+    <Button
+        android:id="@+id/refresh_button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="40dp"
         android:layout_above="@+id/under_board"
-        android:visibility="gone">
+        android:gravity="start|center_vertical"
+        android:onClick="Refresh"
+        android:text="点击此处刷新..."
+        android:textSize="10dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="听力" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/word_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/under_board"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="词汇" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/read_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/under_board"
-        android:visibility="gone">
-
-
-        <ListView
-            android:id="@+id/list_item_read"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/other_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/under_board"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="拓展" />
-    </RelativeLayout>
+    //底部栏显示
 
     <LinearLayout
         android:id="@+id/under_board"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#d7d4d4"
+        android:background="@color/title"
         android:weightSum="5">
 
         <LinearLayout
@@ -106,7 +158,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="口语"
+                android:text="@string/title_spo"
                 android:textSize="10dp" />
         </LinearLayout>
 
@@ -129,7 +181,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="听力"
+                android:text="@string/title_listen"
                 android:textSize="10dp" />
 
         </LinearLayout>
@@ -154,7 +206,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="词汇"
+                android:text="@string/title_word"
                 android:textSize="10dp" />
         </LinearLayout>
 
@@ -178,7 +230,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="阅读"
+                android:text="@string/title_read"
                 android:textSize="10dp" />
 
         </LinearLayout>
@@ -203,7 +255,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="拓展"
+                android:text="@string/title_other"
                 android:textSize="10dp" />
 
         </LinearLayout>

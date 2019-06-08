@@ -1,31 +1,58 @@
 package com.jxau.jf.englishstudy.mainContent;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.jxau.jf.englishstudy.R;
-import com.jxau.jf.englishstudy.coverAdapter.SpokenAdapter;
+import com.jxau.jf.englishstudy.coverAdapter.CataAdapter;
+import com.jxau.jf.englishstudy.thread.CataHttpThread;
+import com.jxau.jf.englishstudy.utils.HttpUtils;
+import com.jxau.jf.englishstudy.vo.SpoCatas;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity implements View.OnClickListener {
     private ListView listView1, listView2, listView3, listView4, listView5;
     private ImageButton button1, button2, button3, button4, button5;
     private RelativeLayout layout1, layout2, layout3, layout4, layout5;
+    private LinearLayout warn_layout;
+    private int viewId = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        init_control();
+        init_view();
+    }
+
+    //刷新按钮
+    public void Refresh(View view) {
+        if (isNetworkAvailable(this)) {
+            init_view();
+        } else {
+
+            warn_layout.setVisibility(View.VISIBLE);
+            Toast.makeText(this, "请检查当前网络连接状况", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void init_control() {
+        warn_layout = findViewById(R.id.warning);
         layout1 = findViewById(R.id.spoken_layout);
         layout2 = findViewById(R.id.listen_layout);
         layout3 = findViewById(R.id.word_layout);
@@ -42,106 +69,170 @@ public class MainActivity extends Activity implements View.OnClickListener {
         button4.setOnClickListener(this);
         button5.setOnClickListener(this);
         listView1 = findViewById(R.id.list_item_spo);
+        listView2 = findViewById(R.id.list_item_listen);
+        listView3 = findViewById(R.id.list_item_word);
         listView4 = findViewById(R.id.list_item_read);
-        init_view();
     }
 
     private void init_view() {
         //显示口语目录条目
-        final List<String> spoItemList = new ArrayList<>();
-        for (int i = 0; i < 80; i++) {
-            spoItemList.add("这是第" + i + "本口语书");
-        }
         //设置ListView的数据适配器
-        listView1.setAdapter(new SpokenAdapter(this, spoItemList));
-        listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String spoTitle = spoItemList.get(position);
-                Intent intent = new Intent(MainActivity.this, SpokenActivity.class);
-                intent.putExtra("title", spoTitle);
-                startActivity(intent);
-            }
-        });
-        show_spoken();
+        final List<SpoCatas> spoCatas = get_cata(HttpUtils.spoCata);
+        if (spoCatas == null) {
+            warn_layout.setVisibility(View.VISIBLE);
+            Toast.makeText(this, "无法获取服务器资源", Toast.LENGTH_SHORT).show();
+        } else {
+            warn_layout.setVisibility(View.GONE);
+            listView1.setAdapter(new CataAdapter(this, R.layout.item_cata_title, spoCatas));
+            //设置点击事件
+            listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String spoTitle = spoCatas.get(position).getTitle();
+                    Intent intentToSpo = new Intent(MainActivity.this, SpokenActivity.class);
+                    intentToSpo.putExtra("title", spoTitle);
+                    startActivity(intentToSpo);
+                }
+            });
+        }
+        //显示听力目录条目
+        //设置ListView的数据适配器
+        final List<SpoCatas> lisCatas = get_cata(HttpUtils.lisCata);
+        if (lisCatas == null) {
+            warn_layout.setVisibility(View.VISIBLE);
+        } else {
+            warn_layout.setVisibility(View.GONE);
+            listView2.setAdapter(new CataAdapter(this, R.layout.item_cata_title, lisCatas));
+            listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String readTitle = lisCatas.get(position).getTitle();
+                    Intent intentToRead = new Intent(MainActivity.this, ReadActivity.class);
+                    intentToRead.putExtra("title", readTitle);
+                    startActivity(intentToRead);
+                }
+            });
+        }
         //显示阅读目录条目
-        final List<String> readItemList = new ArrayList<>();
-        for (int i = 0; i < 80; i++) {
-            readItemList.add("这是第" + i + "本阅读书");
-        }
         //设置ListView的数据适配器
-        listView4.setAdapter(new SpokenAdapter(this, readItemList));
-        listView4.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String readTitle = readItemList.get(position);
-                Intent intentToRead = new Intent(MainActivity.this, ReadActivity.class);
-                intentToRead.putExtra("title", readTitle);
-                startActivity(intentToRead);
-            }
-        });
+        final List<SpoCatas> wordCatas = get_cata(HttpUtils.wordCata);
+        if (wordCatas == null) {
+            warn_layout.setVisibility(View.VISIBLE);
+        } else {
+            warn_layout.setVisibility(View.GONE);
+            listView3.setAdapter(new CataAdapter(this, R.layout.item_cata_title, wordCatas));
+            listView3.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String readTitle = wordCatas.get(position).getTitle();
+                    Intent intentToRead = new Intent(MainActivity.this, ReadActivity.class);
+                    intentToRead.putExtra("title", readTitle);
+                    startActivity(intentToRead);
+                }
+            });
+        }
+        //显示阅读目录条目
+        //设置ListView的数据适配器
+        final List<SpoCatas> readCatas = get_cata(HttpUtils.readCata);
+        if (readCatas == null) {
+            warn_layout.setVisibility(View.VISIBLE);
+        } else {
+            warn_layout.setVisibility(View.GONE);
+            listView4.setAdapter(new CataAdapter(this, R.layout.item_cata_title, readCatas));
+            listView4.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String readTitle = readCatas.get(position).getTitle();
+                    Intent intentToRead = new Intent(MainActivity.this, ReadActivity.class);
+                    intentToRead.putExtra("title", readTitle);
+                    startActivity(intentToRead);
+                }
+            });
+        }
+        show_view(viewId);
     }
 
+    //根据内容名称去加载相应的目录，并将目录加载到相应的界面容器之中
+    public List<SpoCatas> get_cata(String path) {
+        CataHttpThread CataHttpThread = new CataHttpThread(path);
+        CataHttpThread.start();
+        try {
+            CataHttpThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        List<SpoCatas> ItemList =
+                JSON.parseArray(CataHttpThread.getResult(), SpoCatas.class);
+        return ItemList;
+    }
+
+    //底部按钮的点击处理
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.spoken_button:
-                show_spoken();
+                viewId = 1;
+                show_view(viewId);
                 break;
             case R.id.listen_button:
-                show_listen();
+                viewId = 2;
+                show_view(viewId);
                 break;
             case R.id.word_button:
-                show_word();
+                viewId = 3;
+                show_view(viewId);
                 break;
             case R.id.read_button:
-                show_read();
+                viewId = 4;
+                show_view(viewId);
                 break;
             case R.id.other_button:
-                show_other();
+                viewId = 5;
+                show_view(viewId);
                 break;
         }
     }
 
-    //口语显示首页
-    private void show_spoken() {
-        layout1.setVisibility(View.VISIBLE);
-        layout2.setVisibility(View.GONE);
-        layout3.setVisibility(View.GONE);
-        layout4.setVisibility(View.GONE);
-        layout5.setVisibility(View.GONE);
-    }
 
-    private void show_listen() {
-        layout1.setVisibility(View.GONE);
-        layout2.setVisibility(View.VISIBLE);
-        layout3.setVisibility(View.GONE);
-        layout4.setVisibility(View.GONE);
-        layout5.setVisibility(View.GONE);
-    }
-
-    private void show_word() {
-        layout1.setVisibility(View.GONE);
-        layout2.setVisibility(View.GONE);
-        layout3.setVisibility(View.VISIBLE);
-        layout4.setVisibility(View.GONE);
-        layout5.setVisibility(View.GONE);
-    }
-
-    private void show_read() {
-        layout1.setVisibility(View.GONE);
-        layout2.setVisibility(View.GONE);
-        layout3.setVisibility(View.GONE);
-        layout4.setVisibility(View.VISIBLE);
-        layout5.setVisibility(View.GONE);
-    }
-
-    private void show_other() {
-        layout1.setVisibility(View.GONE);
-        layout2.setVisibility(View.GONE);
-        layout3.setVisibility(View.GONE);
-        layout4.setVisibility(View.GONE);
-        layout5.setVisibility(View.VISIBLE);
+    private void show_view(int id) {
+        switch (id) {
+            case 1:
+                layout1.setVisibility(View.VISIBLE);
+                layout2.setVisibility(View.GONE);
+                layout3.setVisibility(View.GONE);
+                layout4.setVisibility(View.GONE);
+                layout5.setVisibility(View.GONE);
+                break;
+            case 2:
+                layout1.setVisibility(View.GONE);
+                layout2.setVisibility(View.VISIBLE);
+                layout3.setVisibility(View.GONE);
+                layout4.setVisibility(View.GONE);
+                layout5.setVisibility(View.GONE);
+                break;
+            case 3:
+                layout1.setVisibility(View.GONE);
+                layout2.setVisibility(View.GONE);
+                layout3.setVisibility(View.VISIBLE);
+                layout4.setVisibility(View.GONE);
+                layout5.setVisibility(View.GONE);
+                break;
+            case 4:
+                layout1.setVisibility(View.GONE);
+                layout2.setVisibility(View.GONE);
+                layout3.setVisibility(View.GONE);
+                layout4.setVisibility(View.VISIBLE);
+                layout5.setVisibility(View.GONE);
+                break;
+            case 5:
+                layout1.setVisibility(View.GONE);
+                layout2.setVisibility(View.GONE);
+                layout3.setVisibility(View.GONE);
+                layout4.setVisibility(View.GONE);
+                layout5.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
     @Override
@@ -162,21 +253,30 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            exit();
+            Intent i = new Intent(Intent.ACTION_MAIN);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.addCategory(Intent.CATEGORY_HOME);
+            startActivity(i);
             return false;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    public void exit() {
-        long exitTime = 0;
-        if ((System.currentTimeMillis() - exitTime) > 2000) {
-//            Toast.makeText(getApplicationContext(), "再按一次退出程序",
-//                    Toast.LENGTH_SHORT).show();
-            exitTime = System.currentTimeMillis();
+    //检查网络可用性
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) {
         } else {
-            finish();
-            System.exit(0);
+            NetworkInfo[] info = cm.getAllNetworkInfo();
+            if (info != null) {
+                for (int i = 0; i < info.length; i++) {
+                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
         }
+        return false;
     }
 }

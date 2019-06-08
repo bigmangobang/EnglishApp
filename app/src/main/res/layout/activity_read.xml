@@ -9,14 +9,17 @@
     <TextView
         android:id="@+id/read_title"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
+        android:minHeight="40dp"
         android:background="@color/baseBoard"
         android:gravity="center_vertical"
         android:paddingStart="40dp"
         android:text="this is title"
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:paddingLeft="40dp" />
 
     <ScrollView
+        android:id="@+id/read_scroll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/read_title">
@@ -27,7 +30,9 @@
             android:layout_height="wrap_content"
             android:paddingStart="10dp"
             android:textIsSelectable="true"
-            android:text="content" />
+            android:textSize="18dp"
+            android:text="content"
+            android:paddingLeft="10dp" />
     </ScrollView>
 
 
