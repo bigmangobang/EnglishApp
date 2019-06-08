@@ -3,7 +3,6 @@ package com.jxau.jf.englishstudy.mainContent;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -162,9 +161,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             e.printStackTrace();
         }
 
-        List<SpoCatas> ItemList =
-                JSON.parseArray(CataHttpThread.getResult(), SpoCatas.class);
-        return ItemList;
+        return JSON.parseArray(CataHttpThread.getResult(), SpoCatas.class);
     }
 
     //底部按钮的点击处理
@@ -266,12 +263,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm == null) {
-        } else {
+        if (cm != null) {
             NetworkInfo[] info = cm.getAllNetworkInfo();
             if (info != null) {
-                for (int i = 0; i < info.length; i++) {
-                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                for (NetworkInfo networkInfo : info) {
+                    if (networkInfo.getState() == NetworkInfo.State.CONNECTED) {
                         return true;
                     }
                 }

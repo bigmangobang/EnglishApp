@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EnglishStudy</string>
+    <string name="app_name">英语</string>
     <string name="title_name">口袋英语</string>
     <string name="error_connect">与服务连接失败</string>
     <string name="title_spo">口语</string>
