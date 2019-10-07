@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jxau.jf.englishstudy.R;
+import com.jxau.jf.englishstudy.utils.MultiThreadDownload;
 
 import java.io.File;
 import java.io.IOException;

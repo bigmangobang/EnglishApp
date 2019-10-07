@@ -21,6 +21,10 @@
     <!-- 读取手机信息权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -28,6 +32,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".WelcomeActivity">
             <intent-filter>
@@ -37,6 +42,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".mainContent.MainActivity" />
+        <activity android:name=".mainContent.ListeningActivity"></activity>
         <activity android:name=".mainContent.SpokenActivity" android:launchMode="singleInstance"/>
         <activity android:name=".mainContent.ReadActivity" />
     </application>

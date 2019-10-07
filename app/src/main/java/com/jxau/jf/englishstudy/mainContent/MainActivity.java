@@ -20,8 +20,10 @@ import com.jxau.jf.englishstudy.R;
 import com.jxau.jf.englishstudy.coverAdapter.CataAdapter;
 import com.jxau.jf.englishstudy.thread.CataHttpThread;
 import com.jxau.jf.englishstudy.utils.HttpUtils;
+import com.jxau.jf.englishstudy.utils.MultiThreadDownload;
 import com.jxau.jf.englishstudy.vo.SpoCatas;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -37,6 +39,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
         init_control();
         init_view();
+
     }
 
     //刷新按钮
@@ -97,6 +100,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //显示听力目录条目
         //设置ListView的数据适配器
         final List<SpoCatas> lisCatas = get_cata(HttpUtils.lisCata);
+        MultiThreadDownload multiThreadDownload = new MultiThreadDownload(HttpUtils.URL + HttpUtils.SPO + "girl.mp3", 4);
+        multiThreadDownload.start();
+        try {
+            multiThreadDownload.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (lisCatas == null) {
             warn_layout.setVisibility(View.VISIBLE);
         } else {
@@ -106,7 +116,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String readTitle = lisCatas.get(position).getTitle();
-                    Intent intentToRead = new Intent(MainActivity.this, ReadActivity.class);
+                    Intent intentToRead = new Intent(MainActivity.this, ListeningActivity.class);
                     intentToRead.putExtra("title", readTitle);
                     startActivity(intentToRead);
                 }
@@ -115,6 +125,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //显示阅读目录条目
         //设置ListView的数据适配器
         final List<SpoCatas> wordCatas = get_cata(HttpUtils.wordCata);
+
         if (wordCatas == null) {
             warn_layout.setVisibility(View.VISIBLE);
         } else {
